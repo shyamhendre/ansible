@@ -1,4 +1,11 @@
+[web]
 server1
+
+[db]
 server2
+
+[app]
 server3
+
+[vpn]
 server4
