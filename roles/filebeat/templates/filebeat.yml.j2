@@ -1,0 +1,11 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/*.log
+
+output.elasticsearch:
+  hosts: ["{{ elasticsearch_host | default('http://192.168.1.100:9200') }}"]
+
+setup.kibana:
+  host: "{{ kibana_host | default('http://192.168.1.100:5601') }}"

@@ -1,0 +1,14 @@
+- name: Install and configure Filebeat
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - name: Install python3-apt (required for apt module)
+      raw: |
+        if ! dpkg -s python3-apt >/dev/null 2>&1; then
+          apt-get update && apt-get install -y python3-apt
+        fi
+      changed_when: false
+
+  roles:
+    - filebeat

@@ -1,0 +1,45 @@
+- name: Create /usr/share/keyrings if it doesn't exist
+  file:
+    path: /usr/share/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Download Elastic GPG key
+  get_url:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    dest: /usr/share/keyrings/elastic-archive-keyring.gpg
+    mode: '0644'
+
+- name: Add Elastic APT repository (signed-by method)
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/elastic-archive-keyring.gpg] https://artifacts.elastic.co/packages/7.x/apt stable main"
+    state: present
+    filename: 'elastic-7.x'
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install Filebeat
+  apt:
+    name: filebeat
+    state: present
+
+- name: Deploy filebeat.yml config
+  template:
+    src: filebeat.yml.j2
+    dest: /etc/filebeat/filebeat.yml
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable Filebeat system module
+  command: filebeat modules enable system
+  args:
+    creates: /etc/filebeat/modules.d/system.yml
+
+- name: Enable and start Filebeat service
+  systemd:
+    name: filebeat
+    enabled: yes
+    state: started
