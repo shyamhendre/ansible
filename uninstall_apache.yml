@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Ensure httpd service is stopped and disabled
+      service:
+        name: httpd
+        state: stopped
+        enabled: false
+
+    - name: Remove httpd package
+      package:
+        name: httpd
+        state: absent
